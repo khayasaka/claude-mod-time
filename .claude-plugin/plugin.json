@@ -1,0 +1,16 @@
+{
+  "name": "time",
+  "version": "0.1.0",
+  "description": "A tool the model calls to get the current date and time (mcp__time__current_time), with no MCP server or external process",
+  "author": { "name": "khayasaka" },
+  "license": "MIT",
+  "repository": "https://github.com/khayasaka/claude-mod-time",
+  "userConfig": {
+    "timezone": {
+      "type": "string",
+      "title": "Current time tool: default time zone",
+      "description": "IANA time zone name used when the tool's timezone argument is omitted (e.g. Asia/Tokyo). Leave empty to use the machine's time zone.",
+      "default": ""
+    }
+  }
+}

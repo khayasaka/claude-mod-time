@@ -1,0 +1,6 @@
+{
+  "name": "claude-mod-time",
+  "owner": { "name": "khayasaka" },
+  "description": "A Claude Code mod that gives the model a tool to get the current date and time",
+  "plugins": [{ "name": "time", "source": "./" }]
+}
