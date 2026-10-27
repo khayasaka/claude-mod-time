@@ -1,7 +1,7 @@
 import { expect, test } from 'claude-code/testing'
 import { formatCurrentTime, resolveDefaultTimeZone } from '../hooks/time'
 
-// 2026-10-27T02:16:29Z（東京では 11:16:29 の火曜日）
+// 2026-10-27T02:16:29Z (11:16:29 on Tuesday in Tokyo)
 const NOW = Date.UTC(2026, 9, 27, 2, 16, 29)
 
 test('returns the date, time, weekday and offset in Tokyo', () => {
@@ -11,7 +11,7 @@ test('returns the date, time, weekday and offset in Tokyo', () => {
 })
 
 test('a zone behind UTC gives the previous date and a negative offset', () => {
-  // ニューヨークは 2026-10-27 時点で夏時間（UTC-04:00）
+  // New York is on daylight saving time (UTC-04:00) on 2026-10-27
   expect(formatCurrentTime(NOW, 'America/New_York').split('\n')).toEqual([
     '2026-10-26 22:16:29 (Monday)',
     'Time zone: America/New_York (UTC-04:00)',
@@ -38,13 +38,13 @@ test('falls back to UTC when the machine time zone is unavailable', () => {
   expect(resolveDefaultTimeZone('  ', '')).toBe('UTC')
 })
 
-// ツール名は登録前のため型に無い。テンプレートリテラル型にして $.tool.call に渡す
+// The tool name is not in the types before it is registered, so pass it to $.tool.call as a template literal type
 const TOOL: `mcp__time__${string}` = 'mcp__time__current_time'
 
 test('with no setting and no argument, returns the time in the machine time zone', async ($, on) => {
   on('clock.now', () => ({ value: NOW }))
   const result = await $.tool.call({ tool: TOOL })
-  // 期待値はテストを実行するマシンのタイムゾーンで組み立てる
+  // Build the expected value in the time zone of the machine running the test
   expect(result.result).toBe(formatCurrentTime(NOW, Intl.DateTimeFormat().resolvedOptions().timeZone))
 })
 

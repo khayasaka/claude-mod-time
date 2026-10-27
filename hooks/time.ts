@@ -1,9 +1,9 @@
-// マシンのタイムゾーンを取得できなかったときに使う
+// Used when the machine's time zone is unavailable
 const FALLBACK_TIME_ZONE = 'UTC'
 
-// ツールの引数を省略したときのタイムゾーンを決める
-// /config で設定された値を優先し、未設定（空）ならマシンのタイムゾーンを使う
-// machine はマシンのタイムゾーン。テストで値を固定できるよう、呼び出し側で取得して渡す
+// Decides the time zone used when the tool's argument is omitted
+// The /config value wins; when it is empty, the machine's time zone is used
+// machine is the machine's time zone, read by the caller and passed in so tests can fix it
 export function resolveDefaultTimeZone(configured: unknown, machine: string | undefined): string {
   if (typeof configured === 'string' && configured.trim() !== '') {
     return configured.trim()
@@ -15,8 +15,8 @@ function pad(value: number, length = 2): string {
   return String(value).padStart(length, '0')
 }
 
-// 指定したタイムゾーンでの現在日時を、表示用の文字列にする
-// 未知のタイムゾーンは Intl.DateTimeFormat が RangeError を投げるので、呼び出し側でエラーとして扱う
+// Formats the current date and time in a time zone for display
+// Intl.DateTimeFormat throws a RangeError for an unknown time zone; the caller handles it as an error
 export function formatCurrentTime(epochMs: number, timeZone: string): string {
   const parts = new Intl.DateTimeFormat('en-US', {
     timeZone,
@@ -37,8 +37,8 @@ export function formatCurrentTime(epochMs: number, timeZone: string): string {
   const minute = Number(get('minute'))
   const second = Number(get('second'))
 
-  // UTC からの時差は、現地の日時を UTC とみなした値と実際の時刻の差から求める
-  // timeZoneName の 'longOffset' は実行環境の ICU によって表記が異なりうるため使わない
+  // The UTC offset is the difference between the local date and time read as UTC and the actual time
+  // timeZoneName 'longOffset' is not used, as its wording can differ between ICU builds
   const localAsUtc = Date.UTC(year, month - 1, day, hour, minute, second)
   const offsetMinutes = Math.round((localAsUtc - Math.floor(epochMs / 1000) * 1000) / 60000)
   const sign = offsetMinutes < 0 ? '-' : '+'
@@ -46,7 +46,7 @@ export function formatCurrentTime(epochMs: number, timeZone: string): string {
 
   const date = `${year}-${pad(month)}-${pad(day)}`
   const time = `${pad(hour)}:${pad(minute)}:${pad(second)}`
-  // 曜日はロケール en-US の英語名（Tuesday など）をそのまま使う。ユーザーの言語への読み替えはモデルに任せる
+  // The weekday is the en-US name (Tuesday, ...); the model renders it in the user's language
   const weekday = get('weekday')
 
   return [
