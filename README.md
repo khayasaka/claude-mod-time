@@ -1,5 +1,7 @@
 # time
 
+English | [日本語](README.ja.md)
+
 A Claude Code mod that gives the model a tool, `mcp__time__current_time`, to look up the current date and time.
 
 Claude has no clock of its own: without a tool, all it knows is the date the system passes it.
